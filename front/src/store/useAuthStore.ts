@@ -10,6 +10,8 @@ interface User {
   email: string;
   balance: number;
   role: 'admin' | 'user';
+  avatarUrl?: string | null;
+  createdAt?: string;
 }
 
 export type { User };

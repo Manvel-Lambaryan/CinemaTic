@@ -53,4 +53,71 @@ const deposit = async (req, res) => {
   }
 };
 
-module.exports = { register, login, user, deposit };
+const analytics = async (req, res) => {
+  try {
+    const data = await authService.getUserAnalytics(req.user.id);
+    res.json({ data });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+const changeEmail = async (req, res) => {
+  try {
+    const { email, currentPassword } = req.body;
+    const updatedUser = await authService.changeEmail(
+      req.user.id,
+      email,
+      currentPassword,
+    );
+    res.json({ data: updatedUser, message: "Email updated successfully" });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+const changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    await authService.changePassword(req.user.id, currentPassword, newPassword);
+    res.json({ message: "Password updated successfully" });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+const changeAvatar = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: "No avatar file provided" });
+    }
+
+    const avatarPath = `/uploads/avatars/${req.file.filename}`;
+    const updatedUser = await authService.changeAvatar(req.user.id, avatarPath);
+    res.json({ data: updatedUser, message: "Avatar updated successfully" });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+const deleteAccount = async (req, res) => {
+  try {
+    const { password } = req.body;
+    await authService.deleteAccount(req.user.id, password);
+    res.json({ message: "Account deleted successfully" });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+module.exports = {
+  register,
+  login,
+  user,
+  deposit,
+  analytics,
+  changeEmail,
+  changePassword,
+  changeAvatar,
+  deleteAccount,
+};

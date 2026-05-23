@@ -11,6 +11,8 @@ const storage = multer.diskStorage({
       dir = path.join(rootDir, "videos");
     } else if (file.fieldname === "imageUrl") {
       dir = path.join(rootDir, "not");
+    } else if (file.fieldname === "avatar") {
+      dir = path.join(rootDir, "avatars");
     }
 
     if (!fs.existsSync(dir)) {

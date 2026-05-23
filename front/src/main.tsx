@@ -15,7 +15,7 @@ const Home = lazy(() => import("./pages/menu/Home").then(module => ({ default: m
 const Movie = lazy(() => import("./pages/menu/movie/Movie").then(module => ({ default: module.Movie })));
 const Discover = lazy(() => import("./pages/menu/movie/Discover").then(module => ({ default: module.Discover })));
 const Booking = lazy(() => import("./pages/menu/movie/Booking").then(module => ({ default: module.Booking })));
-const PaymentHistory = lazy(() => import("./pages/menu/movie/Payment").then(module => ({ default: module.default })));
+const UserProfile = lazy(() => import("./pages/menu/UserProfile").then(module => ({ default: module.UserProfile })));
 const Admin = lazy(() => import("./pages/admin/Admin").then(module => ({ default: module.Admin })));
 const AddMovie = lazy(() => import("./pages/admin/add-movie").then(module => ({ default: module.AddMovie })));
 const MovieList = lazy(() => import("./pages/admin/MovieList").then(module => ({ default: module.default })));
@@ -45,6 +45,11 @@ const PublicRoute = () => {
   return token ? <Navigate to="/" replace /> : <Outlet />;
 };
 
+const AdminRoute = () => {
+  const isAdmin = useAuthStore((s) => s.isAdmin);
+  return isAdmin ? <Outlet /> : <Navigate to="/" replace />;
+};
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
@@ -59,22 +64,27 @@ createRoot(document.getElementById("root")!).render(
             
             {/* Protected routes */}
             <Route element={<ProtectedRoute />}>
-              <Route path="/" element={<CinemaLayout />}>
-                <Route index element={<Home />} />
-                <Route path="movie/:id" element={<Movie />} />
-                <Route path="movies" element={<Discover />} />
-                <Route path="calendar" element={<MovieCalendar />} />
-                <Route path="profile/payments" element={<PaymentHistory />} />
-                <Route path="cinema/:cinemaId/:id" element={<Booking />} />
-                
-                {/* Admin routes */}
-                <Route path="admin" element={<Admin />}>
+              {/* Admin panel — separate layout, no header */}
+              <Route element={<AdminRoute />}>
+                <Route path="/admin" element={<Admin />}>
+                  <Route index element={<Navigate to="add-movie" replace />} />
                   <Route path="add-cinema" element={<AddCinema />} />
                   <Route path="add-movie" element={<AddMovie />} />
                   <Route path="list" element={<MovieList />} />
                   <Route path="get-users" element={<Users />} />
                   <Route path="tickets" element={<TicketManagement />} />
                 </Route>
+              </Route>
+
+              {/* Main cinema layout with header */}
+              <Route path="/" element={<CinemaLayout />}>
+                <Route index element={<Home />} />
+                <Route path="movie/:id" element={<Movie />} />
+                <Route path="movies" element={<Discover />} />
+                <Route path="calendar" element={<MovieCalendar />} />
+                <Route path="profile" element={<UserProfile />} />
+                <Route path="profile/payments" element={<Navigate to="/profile" replace />} />
+                <Route path="cinema/:cinemaId/:id" element={<Booking />} />
               </Route>
             </Route>
             

@@ -6,11 +6,9 @@ import {
   Squares2X2Icon,
   FilmIcon,
   ArrowRightOnRectangleIcon,
-  ShieldCheckIcon,
   SunIcon,
   MoonIcon,
   WalletIcon,
-  ClockIcon,
   Cog6ToothIcon,
   XMarkIcon,
   SwatchIcon,
@@ -75,6 +73,10 @@ export const CinemaLayout = () => {
   const handleLogout = () => {
     logout();
     navigate("/login");
+  };
+
+  const handleProfileClick = () => {
+    navigate(isAdmin ? "/admin" : "/profile");
   };
 
   return (
@@ -242,22 +244,6 @@ export const CinemaLayout = () => {
               label={t("schedule", { defaultValue: "Schedule" })}
               active={location.pathname === "/calendar"}
             />
-            <TopNavLink
-              to="/profile/payments"
-              icon={<ClockIcon className="w-6 h-6" />}
-              label={t("history")}
-              active={location.pathname === "/profile/payments"}
-            />
-
-            {/* 🛡️ ADMIN PANEL BUTTON (ՎԵՐԱԿԱՆԳՆՎԱԾ) */}
-            {isAdmin && (
-              <TopNavLink
-                to="/admin/add-movie"
-                icon={<ShieldCheckIcon className="w-6 h-6" />}
-                label={t("admin_panel", { defaultValue: "Admin" })}
-                active={location.pathname.startsWith("/admin/add-movie")}
-              />
-            )}
           </nav>
         </div>
 
@@ -286,7 +272,7 @@ export const CinemaLayout = () => {
             <motion.div
               whileHover={{ scale: 1.02 }}
               className="hidden md:flex items-center gap-3 px-5 py-2.5 bg-zinc-100 dark:bg-white/5 rounded-[20px] border border-zinc-200 dark:border-white/5 cursor-pointer shadow-inner"
-              onClick={() => navigate("/profile/payments")}
+              onClick={() => navigate("/profile")}
             >
               <WalletIcon className="w-4 h-4 text-green-500" />
               <div className="flex flex-col text-left">
@@ -299,14 +285,20 @@ export const CinemaLayout = () => {
                 </span>
               </div>
             </motion.div>
-            <div className="flex flex-col">
+            <motion.button
+              type="button"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={handleProfileClick}
+              className="flex flex-col text-left cursor-pointer"
+            >
               <span className="text-[9px] font-black text-red-600 uppercase tracking-[2px] mb-1 leading-none">
                 {isAdmin ? t("role_admin") : t("role_user")}
               </span>
-              <span className="text-xs font-black tracking-widest uppercase opacity-80 max-w-[100px] truncate leading-none">
+              <span className="text-xs font-black tracking-widest uppercase opacity-80 max-w-[100px] truncate leading-none hover:text-red-600 transition-colors">
                 {userName || "Guest"}
               </span>
-            </div>
+            </motion.button>
           </div>
         </div>
       </header>

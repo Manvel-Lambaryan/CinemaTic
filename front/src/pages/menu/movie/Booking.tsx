@@ -66,7 +66,7 @@ export const Booking = () => {
     try {
       await confirmOrder(user._id || user.id, cinemaId!, id!);
       toast.success(t("booking_successful"));
-      navigate("/profile/payments");
+      navigate("/profile");
     } catch (error: any) {
       toast.error(error.response?.data?.message || t("payment_failed"));
     }
